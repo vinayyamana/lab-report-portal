@@ -25,9 +25,11 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "dotenv": "^18.0.9",
     "eslint": "^9",
     "eslint-config-next": "16.4.5",
     "tailwindcss": "^4",
+    "tsx": "^4.23.15",
     "typescript": "^5",
     "vitest": "^3.2.7"
   },
@@ -36,5 +38,8 @@
     "@prisma/engines@6.19.3": true,
     "prisma@6.19.3": true,
     "esbuild@0.28.2": true
+  },
+  "prisma": {
+    "seed": "tsx prism/seed.ts"
   }
 }
