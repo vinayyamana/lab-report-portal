@@ -1,15 +1,128 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+enum Role {
+  PATIENT
+  FRONT_DESK
+}
+
+enum OrderStatus {
+  PROCESSING
+  READY
+  READY_CRITICAL
+}
+
+enum Flag {
+  NORMAL
+  LOW
+  HIGH
+  CRITICAL
+}
+
+model User {
+  id        String   @id @default(cuid())
+  mobile    String   @unique
+  name      String
+  role      Role
+  consentAt DateTime?
+  createdAt DateTime @default(now())
+  patients  Patient[]
+}
+
+model Patient {
+  id        String  @id @default(cuid())
+  name      String
+  ownerId   String
+  owner     User    @relation(fields: [ownerId], references: [id])
+  orders    Order[]
+}
+
+model Doctor {
+  id     String  @id @default(cuid())
+  name   String
+  orders Order[]
+}
+
+model Order {
+  id         String      @id @default(cuid())
+  orderCode  String      @unique
+  patientId  String
+  patient    Patient     @relation(fields: [patientId], references: [id])
+  doctorId   String?
+  doctor     Doctor?     @relation(fields: [doctorId], references: [id])
+  status     OrderStatus
+  signedAt   DateTime?
+  results    Result[]
+  links      ReportLink[]
+  summaries  Summary[]
+  tasks      CallbackTask[]
+}
+
+model Result {
+  id        String @id @default(cuid())
+  orderId   String
+  order     Order  @relation(fields: [orderId], references: [id])
+  parameter String
+  unit      String
+  value     Float
+  refLow    Float
+  refHigh   Float
+  criticalLow  Float?
+  criticalHigh Float?
+  flag      Flag
+}
+
+model Summary {
+  id        String   @id @default(cuid())
+  orderId   String
+  order     Order    @relation(fields: [orderId], references: [id])
+  lang      String
+  text      String
+  source    String
+  flagged   Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model ReportLink {
+  id        String    @id @default(cuid())
+  tokenHash String    @unique
+  orderId   String
+  order     Order     @relation(fields: [orderId], references: [id])
+  expiresAt DateTime
+  channel   String
+  sentAt    DateTime  @default(now())
+  openedAt  DateTime?
+}
+
+model OtpCode {
+  id        String   @id @default(cuid())
+  mobile    String
+  codeHash  String
+  expiresAt DateTime
+  attempts  Int      @default(0)
+  usedAt    DateTime?
+  createdAt DateTime @default(now())
+}
+
+model CallbackTask {
+  id        String    @id @default(cuid())
+  orderId   String
+  order     Order     @relation(fields: [orderId], references: [id])
+  reason    String
+  doneAt    DateTime?
+  createdAt DateTime @default(now())
+}
+
+model AccessLog {
+  id        String   @id @default(cuid())
+  actor     String
+  action    String
+  orderId   String?
+  at        DateTime @default(now())
 }
