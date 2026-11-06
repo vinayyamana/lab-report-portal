@@ -1,0 +1,4 @@
+order_code,patient_name,mobile,doctor,parameter,unit,value,ref_low,ref_high,critical_low,critical_high,status
+ORD-71301,Ravi Kumar,9000000004,Dr. P. Anitha,Haemoglobin,g/dL,13.1,12.0,15.5,7,20,READY
+ORD-71302,Sita Devi,9000000005,Dr. K. Suresh,Potassium,mmol/L,6.9,3.5,5.1,2.5,6.5,READY
+ORD-71303,Ravi Kumar,9000000004,Dr. S. Ramanaiah,LDL cholesterol,mg/dL,150,0,100,,,PROCESSING
