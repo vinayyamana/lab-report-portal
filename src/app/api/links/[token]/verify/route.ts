@@ -19,9 +19,16 @@ export async function POST(req: Request, { params }: { params: Promise<{ token: 
   const user = await withRetry(() => db.user.findUnique({ where: { mobile: r.mobile } }));
   if (!user) return NextResponse.json({ error: "invalid" }, { status: 404 });
 
-  await createSession({ userId: user.id, role: "PATIENT" });
+  const ord = await withRetry(() => db.order.findUnique({ where: { id: r.orderId }, select: { patientId: true } }));
+  await createSession({ userId: user.id, role: "PATIENT", patientId: ord?.patientId });
   await withRetry(() =>
     db.accessLog.create({ data: { actor: user.id, action: "LINK_OPEN", orderId: r.orderId } })
+  );
+  await withRetry(() =>
+    db.reportLink.updateMany({
+      where: { orderId: r.orderId, openedAt: null, expiresAt: { gt: new Date() } },
+      data: { openedAt: new Date() },
+    })
   );
   return NextResponse.json({ ok: true, orderId: r.orderId });
 }
