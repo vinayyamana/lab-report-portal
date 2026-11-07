@@ -1,6 +1,5 @@
 ﻿"use client";
-import { Suspense } from "react";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useParams } from "next/navigation";
 
 function LinkInner() {
