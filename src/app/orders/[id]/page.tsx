@@ -1,4 +1,5 @@
 ﻿"use client";
+import { Suspense } from "react";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 
@@ -17,7 +18,7 @@ const CRIT_MSG: Record<string, string> = {
   hi: "आपके एक परिणाम पर तुरंत ध्यान देना ज़रूरी है। हमारी टीम जल्द आपको फ़ोन करेगी।",
 };
 
-export default function Report() {
+function ReportInner() {
   const { id } = useParams<{ id: string }>();
   const [lang, setLang] = useState("en");
   const [data, setData] = useState<Data | null>(null);
@@ -62,3 +63,11 @@ export default function Report() {
 }
 
 
+
+export default function Report() {
+  return (
+    <Suspense fallback={<main className="min-h-screen p-4 max-w-md mx-auto"><p className="text-[var(--muted)]">Loading…</p></main>}>
+      <ReportInner />
+    </Suspense>
+  );
+}

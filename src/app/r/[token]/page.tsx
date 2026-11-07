@@ -1,8 +1,9 @@
 ﻿"use client";
+import { Suspense } from "react";
 import { useState } from "react";
 import { useParams } from "next/navigation";
 
-export default function LinkPage() {
+function LinkInner() {
   const { token } = useParams<{ token: string }>();
   const [step, setStep] = useState<"start" | "code" | "dead">("start");
   const [sentTo, setSentTo] = useState("");
@@ -58,5 +59,13 @@ export default function LinkPage() {
         {err && <p role="alert" className="text-[var(--bad)]">{err}</p>}
       </div>
     </main>
+  );
+}
+
+export default function LinkPage() {
+  return (
+    <Suspense fallback={<main className="min-h-screen p-4"><p className="text-[var(--muted)]">Loading…</p></main>}>
+      <LinkInner />
+    </Suspense>
   );
 }
