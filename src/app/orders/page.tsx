@@ -26,6 +26,7 @@ export default function Orders() {
   return (
     <main className="min-h-screen p-4 max-w-md mx-auto space-y-4">
       <h1 className="text-2xl font-semibold">Your reports</h1>
+      <button className="text-[var(--muted)] underline" onClick={async () => { await fetch("/api/auth/logout", { method: "POST" }); window.location.href = "/login"; }}>Log out</button>
       {err && <p role="alert" className="text-[var(--bad)]">{err}</p>}
       {!orders && !err && <p className="text-[var(--muted)]">Loading…</p>}
       {orders && orders.length === 0 && <p className="text-[var(--muted)]">No reports yet.</p>}
@@ -42,3 +43,4 @@ export default function Orders() {
     </main>
   );
 }
+

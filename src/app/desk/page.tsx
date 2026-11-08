@@ -64,6 +64,7 @@ export default function Desk() {
   return (
     <main className="min-h-screen p-4 max-w-4xl mx-auto space-y-4">
       <h1 className="text-2xl font-semibold">Front desk</h1>
+      <button className="text-[var(--muted)] underline" onClick={async () => { await fetch("/api/auth/logout", { method: "POST" }); window.location.href = "/login"; }}>Log out</button>
       <div className="flex gap-2 flex-wrap">
         {tabs.map(([k, n]) => (
           <button key={k} onClick={() => { setTab(k); setMsg(""); }}
@@ -140,3 +141,4 @@ export default function Desk() {
     </main>
   );
 }
+

@@ -89,3 +89,25 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .skeleton { animation: none; }
 }
+button { cursor: pointer; }
+button:focus-visible, input:focus-visible, a:focus-visible { outline: 3px solid var(--brand); outline-offset: 2px; }
+.btn:hover:not(:disabled) { filter: brightness(1.08); }
+@media (max-width: 480px) { body { font-size: 19px; } }
+
+button { cursor: pointer; }
+button:focus-visible, input:focus-visible, a:focus-visible { outline: 3px solid var(--brand); outline-offset: 2px; }
+.btn:hover:not(:disabled) { filter: brightness(1.08); }
+@media (max-width: 480px) { body { font-size: 19px; } }
+
+button { cursor: pointer; }
+button:focus-visible, input:focus-visible, a:focus-visible { outline: 3px solid var(--brand); outline-offset: 2px; }
+.btn:hover:not(:disabled) { filter: brightness(1.08); }
+@media (max-width: 480px) { body { font-size: 19px; } }
+
+body { font-family: var(--font-geist-sans), var(--font-telugu), var(--font-hindi), system-ui, sans-serif; }
+
+body { font-family: var(--font-geist-sans), var(--font-telugu), var(--font-hindi), system-ui, sans-serif; }
+button { cursor: pointer; }
+button:focus-visible, input:focus-visible, a:focus-visible { outline: 3px solid var(--brand); outline-offset: 2px; }
+.btn:hover:not(:disabled) { filter: brightness(1.08); }
+@media (max-width: 480px) { body { font-size: 19px; } }
