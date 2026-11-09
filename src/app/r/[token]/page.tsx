@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { Suspense, useState } from "react";
 import { useParams } from "next/navigation";
 
@@ -20,7 +20,7 @@ function LinkInner() {
       const j = await r.json().catch(() => ({}));
       if (r.status === 410) { setStep("dead"); return null; }
       if (!r.ok) {
-        const m: Record<string, string> = { invalid: "Wrong code", expired: "Code expired. Ask for a new one.", locked: "Too many tries. Ask for a new code." };
+        const m: Record<string, string> = { invalid: "Wrong code", expired: "Code expired. Ask for a new one.", locked: "Too many tries. Ask for a new code.", rate_limited: "Too many code requests. Please wait 15 minutes and try again." };
         throw new Error(m[j.error] || "Something went wrong");
       }
       return j;
