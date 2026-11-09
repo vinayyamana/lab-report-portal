@@ -1,4 +1,5 @@
 import type { Flag } from "./rules";
+import { aiExplain } from "./ai-summary";
 
 export type Lang = "en" | "te" | "hi";
 
@@ -24,7 +25,7 @@ const FOOTER: Record<Lang, string> = {
 
 export type SummaryResult =
   | { kind: "critical" }
-  | { kind: "ok"; text: string };
+  | { kind: "ok"; text: string; source?: "ai" | "template" };
 
 export function buildSummary(items: Item[], lang: Lang): SummaryResult {
   // Critical values get NO summary; staff call back instead
@@ -37,4 +38,19 @@ export function buildSummary(items: Item[], lang: Lang): SummaryResult {
     (i) => `${i.parameter} (${i.value} ${i.unit}) ${FLAG_TEXT[lang][i.flag as "LOW" | "HIGH"]}.`
   );
   return { kind: "ok", text: `${lines.join(" ")} ${FOOTER[lang]}` };
+}
+export async function buildSummaryWithAi(
+  items: Item[],
+  lang: Lang,
+  explain: typeof aiExplain = aiExplain
+): Promise<SummaryResult> {
+  const base = buildSummary(items, lang);
+  if (base.kind === "critical") return base;
+
+  const abnormal = items.filter((i) => i.flag === "LOW" || i.flag === "HIGH");
+  if (abnormal.length === 0) return { ...base, source: "template" };
+
+  const ai = await explain(abnormal, lang);
+  if (!ai) return { ...base, source: "template" };
+  return { kind: "ok", text: `${ai} ${FOOTER[lang]}`, source: "ai" };
 }
