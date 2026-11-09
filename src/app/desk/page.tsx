@@ -17,6 +17,8 @@ export default function Desk() {
   const [tasks, setTasks] = useState<T[] | null>(null);
   const [log, setLog] = useState<L[] | null>(null);
   const [msg, setMsg] = useState("");
+  const [demoLink, setDemoLink] = useState("");
+  const [copied, setCopied] = useState(false);
   const [err, setErr] = useState("");
   const [busy, setBusy] = useState("");
   const [imp, setImp] = useState<{ imported: number; links: number; errors: { line: number; message: string }[] } | null>(null);
@@ -36,16 +38,24 @@ export default function Desk() {
   useEffect(() => { if (tab !== "import") load(tab, tab === "orders" ? q : ""); }, [tab]); // eslint-disable-line
 
   async function act(body: object, key: string, okMsg: string) {
-    setBusy(key); setMsg(""); setErr("");
+    setBusy(key); setMsg(""); setErr(""); setDemoLink(""); setCopied(false);
     try {
       const r = await fetch("/api/desk", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
       const j = await r.json().catch(() => ({}));
       if (!r.ok) throw new Error(j.error || "Failed");
-      
+
       setMsg(okMsg);
+      if (typeof j.demoLink === "string") setDemoLink(j.demoLink);
       load(tab, tab === "orders" ? q : "");
     } catch (e) { setErr((e as Error).message); }
     finally { setBusy(""); }
+  }
+
+  async function copyLink() {
+    try {
+      await navigator.clipboard.writeText(demoLink);
+      setCopied(true);
+    } catch { setErr("Could not copy. Please select and copy the link."); }
   }
 
   async function upload(f: File | undefined) {
@@ -68,11 +78,18 @@ export default function Desk() {
       <button className="text-[var(--muted)] underline" onClick={async () => { await fetch("/api/auth/logout", { method: "POST" }); window.location.href = "/login"; }}>Log out</button>
       <div className="flex gap-2 flex-wrap">
         {tabs.map(([k, n]) => (
-          <button key={k} onClick={() => { setTab(k); setMsg(""); }}
+          <button key={k} onClick={() => { setTab(k); setMsg(""); setDemoLink(""); }}
             className={`rounded-xl border px-4 py-2 ${tab === k ? "bg-[var(--brand)] text-white" : "bg-white"}`}>{n}</button>
         ))}
       </div>
       {msg && <p role="status" className="text-[var(--brand)]">{msg}</p>}
+      {demoLink && (
+        <div role="status" className="card space-y-2" style={{ borderColor: "var(--brand)" }}>
+          <p className="text-[var(--brand)] break-all">Demo link: <a className="underline" href={demoLink} target="_blank" rel="noreferrer">{demoLink}</a></p>
+          <p className="text-[var(--muted)] text-sm">Demo mode: no real SMS or WhatsApp is sent, so the link is shown here for review.</p>
+          <button className="rounded-xl border px-4 py-2 bg-white" onClick={copyLink}>{copied ? "Copied" : "Copy link"}</button>
+        </div>
+      )}
       {err && <p role="alert" className="text-[var(--bad)]">{err}</p>}
 
       {tab === "orders" && (<>
@@ -142,4 +159,3 @@ export default function Desk() {
     </main>
   );
 }
-

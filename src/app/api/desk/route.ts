@@ -116,5 +116,12 @@ export async function POST(req: Request) {
     console.log(`[MOCK SMS] to ${order.patient.owner.mobile}: Your report is ready: /r/${token}`);
   }
   await db.accessLog.create({ data: { actor: s.userId, action: "LINK_RESEND", orderId: order.id } });
+
+  // Mock delivery mode only: no real SMS/WhatsApp is sent, so the reviewer
+  // needs the link on screen. Never returned unless DEMO_MODE=true.
+  if (process.env.DEMO_MODE === "true") {
+    const base = (process.env.APP_URL || new URL(req.url).origin).replace(/\/$/, "");
+    return NextResponse.json({ ok: true, demoLink: `${base}/r/${token}` });
+  }
   return NextResponse.json({ ok: true });
 }
