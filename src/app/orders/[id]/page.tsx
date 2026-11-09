@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { Suspense, useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 
@@ -6,7 +6,7 @@ type Result = { parameter: string; value: number; unit: string; refLow: number; 
 type Data = {
   order: { orderCode: string; status: string; doctor?: string | null };
   results: Result[];
-  summary: { kind: "critical" } | { kind: "ok"; text: string } | null;
+  summary: { kind: "critical" } | { kind: "ok"; text: string; source?: "ai" | "template" } | null;
 };
 type Lang = "en" | "te" | "hi";
 
@@ -109,9 +109,20 @@ function ReportInner() {
                 <div role="alert" lang={lang} className="card border-[var(--bad)]">{CRIT_MSG[lang]}</div>
               )}
               {data.summary?.kind === "ok" && (
-                <div lang={lang} className="card">{data.summary.text}</div>
+                <div lang={lang} className="card">
+                  {data.summary.text}
+                  {data.summary.source === "ai" && (
+                    <p className="mt-2 text-sm" style={{ color: "var(--muted)" }}>Explained by AI. The full report is the source of truth.</p>
+                  )}
+                </div>
               )}
             </>
+          )}
+
+          {data.order.status !== "PROCESSING" && (
+            <a href={`/api/orders/${id}/pdf`} download className="btn-secondary block w-full text-center">
+              Download PDF
+            </a>
           )}
 
           {data.order.status === "PROCESSING" && (

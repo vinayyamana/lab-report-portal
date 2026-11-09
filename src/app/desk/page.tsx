@@ -41,6 +41,7 @@ export default function Desk() {
       const r = await fetch("/api/desk", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
       const j = await r.json().catch(() => ({}));
       if (!r.ok) throw new Error(j.error || "Failed");
+      
       setMsg(okMsg);
       load(tab, tab === "orders" ? q : "");
     } catch (e) { setErr((e as Error).message); }
